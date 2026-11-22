@@ -1,42 +1,63 @@
-# Nectar — онлайн-магазин продуктов (React Native + Expo)
+# Grocery App — React Native + TypeScript
 
-Экраны авторизации по макету Nectar:
+Мобильное приложение продуктового магазина (Expo SDK 58, React Native 0.88, TypeScript, React Navigation 7).
+
+## Экраны
 
 | Экран | Файл |
 |---|---|
-| Splash (через 2 с переходит дальше) | `src/screens/SplashScreen.js` |
-| Welcome / Get Started | `src/screens/OnboardingScreen.js` |
-| Вход по номеру + Google / Facebook | `src/screens/SignInScreen.js` |
-| Ввод номера телефона | `src/screens/NumberScreen.js` |
-| Ввод 4-значного кода | `src/screens/VerificationScreen.js` |
-| Выбор зоны и района | `src/screens/SelectLocationScreen.js` |
-| Login | `src/screens/LoginScreen.js` |
-| Sign Up | `src/screens/SignUpScreen.js` |
-| Временная главная | `src/screens/HomeScreen.js` |
+| Home Screen | `src/screens/HomeScreen.tsx` |
+| Product Detail | `src/screens/ProductDetailScreen.tsx` |
+| Explore (Find Products) | `src/screens/ExploreScreen.tsx` |
+| Beverages (и любая категория) | `src/screens/CategoryScreen.tsx` |
+| Search | `src/screens/SearchScreen.tsx` |
+| Cart / Favourite / Account | `src/screens/CartScreen.tsx`, `FavouriteScreen.tsx`, `AccountScreen.tsx` |
 
-Цепочка: Splash → Welcome → Sign In → Номер → Код → Локация → Login ⇄ Sign Up → Home.
+Работает: добавление в корзину (бейдж на вкладке Cart), количество, избранное (♡), поиск по названию, сортировка по цене в категории, оформление заказа.
 
 ## Запуск
 
 ```bash
 npm install
-npx expo install --fix   # подгоняет версии пакетов под ваш Expo SDK
 npx expo start
 ```
 
-Отсканируйте QR-код приложением **Expo Go** (Android / iOS) — приложение откроется на телефоне.
-
-## Картинки
-
-`assets/images/onboarding.png` (фото курьера) и `assets/images/groceries.png` (продукты) — временные заглушки.
-Экспортируйте настоящие картинки из Figma и положите с теми же именами.
+Затем отсканируйте QR-код приложением **Expo Go** (Android / iOS), или нажмите `a` (Android-эмулятор), `i` (iOS-симулятор), `w` (браузер).
 
 ## Структура
 
 ```
-App.js                  навигация (React Navigation, native stack)
-src/theme.js            цвета
-src/components/Icons.js морковка-логотип, флаг, иконки, иллюстрация карты (SVG)
-src/components/UI.js    кнопки, поля ввода, пастельный фон
-src/screens/            экраны
+App.tsx
+src/
+  components/   ProductCard, SearchBar, ScreenHeader, SectionHeader, QuantityStepper, ProductImage
+  context/      StoreContext — корзина и избранное
+  data/         products.ts — товары и категории
+  navigation/   AppNavigator.tsx, types.ts
+  screens/      все экраны
+  theme/        colors.ts
+```
+
+## API
+
+Товары загружаются из бесплатного учебного API **DummyJSON** (ключ не нужен):
+
+```
+GET https://dummyjson.com/products/category/groceries?limit=0
+```
+
+| Файл | Что делает |
+|---|---|
+| `src/api/productsApi.ts` | Запрос к API (`fetch`) и перевод ответа в наш тип `Product` |
+| `src/context/ProductsContext.tsx` | Загружает товары при запуске, хранит `loading` / `error`, отдаёт их экранам через `useProducts()` |
+| `src/components/LoadingView.tsx` | Спиннер во время загрузки и плашка «Нет связи с API» |
+
+Если интернета нет, приложение показывает локальные товары из `src/data/products.ts`.
+
+## Фото товаров (локальные данные)
+
+Сейчас вместо фото используются эмодзи (работает без интернета). Чтобы показать настоящее фото,
+добавьте товару в `src/data/products.ts` поле `image` с URL:
+
+```ts
+{ id: 'apple', name: 'Naturel Red Apple', image: 'https://.../apple.png', ... }
 ```
