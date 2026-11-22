@@ -3,7 +3,8 @@ import { FlatList, Pressable, StyleSheet, Text, useWindowDimensions, View } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { byCategory } from '../data/products';
+import { useProducts } from '../context/ProductsContext';
+import { LoadingView } from '../components/LoadingView';
 import { ProductCard } from '../components/ProductCard';
 import { ScreenHeader } from '../components/ScreenHeader';
 import { colors } from '../theme/colors';
@@ -24,13 +25,14 @@ export default function CategoryScreen({ route, navigation }: Props) {
   const { width } = useWindowDimensions();
   const cardWidth = (width - 25 * 2 - 15) / 2;
   const [sort, setSort] = useState<Sort>('default');
+  const { byCategory } = useProducts();
 
   const data = useMemo(() => {
     const list = [...byCategory(categoryId)];
     if (sort === 'priceAsc') list.sort((a, b) => a.price - b.price);
     if (sort === 'priceDesc') list.sort((a, b) => b.price - a.price);
     return list;
-  }, [categoryId, sort]);
+  }, [categoryId, sort, byCategory]);
 
   const nextSort = () =>
     setSort((s) => (s === 'default' ? 'priceAsc' : s === 'priceAsc' ? 'priceDesc' : 'default'));
@@ -54,6 +56,7 @@ export default function CategoryScreen({ route, navigation }: Props) {
         contentContainerStyle={styles.list}
         columnWrapperStyle={{ gap: 15 }}
         renderItem={({ item }) => <ProductCard product={item} width={cardWidth} />}
+        ListHeaderComponent={<LoadingView />}
         ListEmptyComponent={
           <View style={styles.empty}>
             <Text style={styles.emptyText}>No products yet</Text>

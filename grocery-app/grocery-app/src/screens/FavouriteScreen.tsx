@@ -3,7 +3,8 @@ import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { formatPrice, getProduct } from '../data/products';
+import { formatPrice } from '../data/products';
+import { useProducts } from '../context/ProductsContext';
 import { useStore } from '../context/StoreContext';
 import { ProductImage } from '../components/ProductImage';
 import { ScreenHeader } from '../components/ScreenHeader';
@@ -12,7 +13,8 @@ import { colors } from '../theme/colors';
 export default function FavouriteScreen() {
   const navigation = useNavigation();
   const { favourites } = useStore();
-  const items = favourites.map(getProduct).filter((p) => p !== undefined);
+  const { getProduct } = useProducts();
+  const items = favourites.map((id) => getProduct(id)).filter((p) => p !== undefined);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>

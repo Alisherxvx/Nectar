@@ -3,7 +3,8 @@ import { Pressable, ScrollView, Share, StyleSheet, Text, View } from 'react-nati
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { formatPrice, getProduct } from '../data/products';
+import { formatPrice } from '../data/products';
+import { useProducts } from '../context/ProductsContext';
 import { useStore } from '../context/StoreContext';
 import { ProductImage } from '../components/ProductImage';
 import { QuantityStepper } from '../components/QuantityStepper';
@@ -35,6 +36,7 @@ function Row({
 }
 
 export default function ProductDetailScreen({ route, navigation }: Props) {
+  const { getProduct } = useProducts();
   const product = getProduct(route.params.productId);
   const { addToCart, toggleFavourite, isFavourite } = useStore();
   const [quantity, setQuantity] = useState(1);

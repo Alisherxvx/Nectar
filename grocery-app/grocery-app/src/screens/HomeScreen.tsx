@@ -3,7 +3,9 @@ import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-n
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
-import { byTag, groceryTypes, Product } from '../data/products';
+import { groceryTypes, Product } from '../data/products';
+import { useProducts } from '../context/ProductsContext';
+import { LoadingView } from '../components/LoadingView';
 import { ProductCard } from '../components/ProductCard';
 import { SearchBar } from '../components/SearchBar';
 import { SectionHeader } from '../components/SectionHeader';
@@ -27,6 +29,7 @@ function ProductRow({ data }: { data: Product[] }) {
 }
 
 export default function HomeScreen({ navigation }: Props) {
+  const { byTag } = useProducts();
   const openSearch = () => navigation.navigate('ExploreTab', { screen: 'Search', params: {} });
   const openCategory = (categoryId: 'fruits' | 'meat', title: string) =>
     navigation.navigate('ExploreTab', { screen: 'Category', params: { categoryId, title } });
@@ -58,6 +61,8 @@ export default function HomeScreen({ navigation }: Props) {
             <View style={styles.dot} />
           </View>
         </View>
+
+        <LoadingView />
 
         <SectionHeader title="Exclusive Offer" onSeeAll={() => openCategory('fruits', 'Exclusive Offer')} />
         <ProductRow data={byTag('exclusive')} />

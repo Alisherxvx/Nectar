@@ -1,5 +1,6 @@
 import React, { createContext, useCallback, useContext, useMemo, useState } from 'react';
-import { getProduct, Product } from '../data/products';
+import type { Product } from '../data/products';
+import { useProducts } from './ProductsContext';
 
 export interface CartItem {
   product: Product;
@@ -24,6 +25,7 @@ const StoreContext = createContext<StoreValue | null>(null);
 export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [quantities, setQuantities] = useState<Record<string, number>>({});
   const [favourites, setFavourites] = useState<string[]>([]);
+  const { getProduct } = useProducts();
 
   const addToCart = useCallback((productId: string, quantity = 1) => {
     setQuantities((prev) => ({ ...prev, [productId]: (prev[productId] ?? 0) + quantity }));
@@ -63,7 +65,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       toggleFavourite,
       isFavourite: (id: string) => favourites.includes(id),
     };
-  }, [quantities, favourites, addToCart, setQuantity, removeFromCart, clearCart, toggleFavourite]);
+  }, [quantities, favourites, getProduct, addToCart, setQuantity, removeFromCart, clearCart, toggleFavourite]);
 
   return <StoreContext.Provider value={value}>{children}</StoreContext.Provider>;
 }

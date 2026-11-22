@@ -3,7 +3,7 @@ import { FlatList, Pressable, StyleSheet, Text, useWindowDimensions, View } from
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
-import { products } from '../data/products';
+import { useProducts } from '../context/ProductsContext';
 import { ProductCard } from '../components/ProductCard';
 import { SearchBar } from '../components/SearchBar';
 import { colors } from '../theme/colors';
@@ -13,6 +13,7 @@ type Props = NativeStackScreenProps<ExploreStackParamList, 'Search'>;
 
 export default function SearchScreen({ route, navigation }: Props) {
   const [query, setQuery] = useState(route.params?.query ?? '');
+  const { products } = useProducts();
   const { width } = useWindowDimensions();
   const cardWidth = (width - 25 * 2 - 15) / 2;
 
@@ -20,7 +21,7 @@ export default function SearchScreen({ route, navigation }: Props) {
     const q = query.trim().toLowerCase();
     if (!q) return products;
     return products.filter((p) => p.name.toLowerCase().includes(q));
-  }, [query]);
+  }, [query, products]);
 
   return (
     <SafeAreaView style={styles.safe} edges={['top']}>

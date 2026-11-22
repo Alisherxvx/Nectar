@@ -37,7 +37,23 @@ src/
   theme/        colors.ts
 ```
 
-## Фото товаров
+## API
+
+Товары загружаются из бесплатного учебного API **DummyJSON** (ключ не нужен):
+
+```
+GET https://dummyjson.com/products/category/groceries?limit=0
+```
+
+| Файл | Что делает |
+|---|---|
+| `src/api/productsApi.ts` | Запрос к API (`fetch`) и перевод ответа в наш тип `Product` |
+| `src/context/ProductsContext.tsx` | Загружает товары при запуске, хранит `loading` / `error`, отдаёт их экранам через `useProducts()` |
+| `src/components/LoadingView.tsx` | Спиннер во время загрузки и плашка «Нет связи с API» |
+
+Если интернета нет, приложение показывает локальные товары из `src/data/products.ts`.
+
+## Фото товаров (локальные данные)
 
 Сейчас вместо фото используются эмодзи (работает без интернета). Чтобы показать настоящее фото,
 добавьте товару в `src/data/products.ts` поле `image` с URL:
